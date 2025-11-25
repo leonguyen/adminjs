@@ -1,0 +1,29 @@
+# render.yaml (ready-to-commit)
+services:
+  - type: web
+    name: adminjs-example-app
+    env: docker
+    repo: https://github.com/SoftwareBrothers/adminjs-example-app
+    branch: master
+    plan: free
+    buildCommand: ""
+    preDeployCommand: |
+      npx prisma generate
+      yarn migration:up
+    envVars:
+      - key: PORT
+        value: "3000"
+      - key: SERVER
+        value: "EXPRESS"
+      - key: SESSION_SECRET
+        value: "CHANGE_ME_SECRET"
+      - key: POSTGRES_DATABASE_URL
+        fromDatabase:
+          name: adminjs-db
+          property: internalConnectionString
+
+databases:
+  - name: adminjs-db
+    region: oregon
+    plan: starter
+    engine: POSTGRESQL
